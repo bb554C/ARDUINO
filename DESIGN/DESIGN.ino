@@ -36,7 +36,6 @@ const int S3 = 5; //Set Switch 3 pin 7/D5
 
 //Address Assignment
 PCF8574 pcf1(0x20);
-PCF8574 pcf2(0x21);
 LiquidCrystal_I2C lcd(0x27, 16, 2); //LCD Display Setting
 Servo servoTop1; //Top side servo 1
 Servo servoTop2; //Top side servo 2
@@ -79,18 +78,11 @@ void setup() {
   pinMode(S2, INPUT);
   pinMode(S3, INPUT);
   //Initialize pcf8574 I/O bit extenders
-  pcf2.pinMode(P0, INPUT);
-  pcf2.pinMode(P1, INPUT);
-  pcf2.pinMode(P2, INPUT);
-  pcf2.pinMode(P3, INPUT);
-  pcf2.pinMode(P4, INPUT);
-  pcf2.begin();
-  pcf1.pinMode(P0, OUTPUT);
-  pcf1.pinMode(P1, OUTPUT);
-  pcf1.pinMode(P2, OUTPUT);
-  pcf1.pinMode(P3, OUTPUT);
-  pcf1.pinMode(P4, OUTPUT);
-  pcf1.pinMode(P5, OUTPUT);
+  pcf1.pinMode(P0, INPUT);
+  pcf1.pinMode(P1, INPUT);
+  pcf1.pinMode(P2, INPUT);
+  pcf1.pinMode(P3, INPUT);
+  pcf1.pinMode(P4, INPUT);
   pcf1.pinMode(P6, INPUT);
   pcf1.pinMode(P7, OUTPUT);
   pcf1.begin();
@@ -106,15 +98,16 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print("System Start");
   //---LCD Initialize end---/
+  pcf1.digitalWrite(P7, HIGH);
   delay(5000); //Delay for initialization of electronics
 }
 
 void loop() {
-  int A = pcf2.digitalRead(P0);
-  int B = pcf2.digitalRead(P1);
-  int C = pcf2.digitalRead(P2);
-  int D = pcf2.digitalRead(P3);
-  int E = pcf2.digitalRead(P4);
+  int A = pcf1.digitalRead(P0);
+  int B = pcf1.digitalRead(P1);
+  int C = pcf1.digitalRead(P2);
+  int D = pcf1.digitalRead(P3);
+  int E = pcf1.digitalRead(P4);
   if (A == 0 && B == 0 && C == 0 && D == 0 && E == 1)
   {
     Weight1Down();
