@@ -42,9 +42,9 @@ Servo servoTop1; //Top side servo 1
 Servo servoTop2; //Top side servo 2
 Servo servoTop3; //Top side servo 3
 Servo servoBot; //Bottom side servo
-HX711 scale1(weightSens1, sck);
-HX711 scale2(weightSens2, sck);
-HX711 scale3(weightSens3, sck);
+HX711 scale1;
+HX711 scale2;
+HX711 scale3;
 
 //Global Variables
 int buttonState1 = 0; //variable for reading the state of Switch 1
@@ -76,6 +76,10 @@ void setup() {
   pinMode(S2, INPUT);
   pinMode(S3, INPUT);
 
+  //Initialize HX711
+  scale1.begin(weightSens1, sck);
+  scale2.begin(weightSens1, sck);
+  scale3.begin(weightSens1, sck);
   //---LCD Initialize---/
   lcd.init();
   lcd.clear();
@@ -154,6 +158,7 @@ void Dispense()
   if (buttonState1 == HIGH)
   {
     servoTop1.write(90); //Open Servo
+    currentWeight = scale1.get_units();
     while (weight < currentWeight)
     {
       currentWeight = scale1.get_units();
@@ -166,8 +171,10 @@ void Dispense()
   if (buttonState2 == HIGH)
   {
     servoTop2.write(90); //Open Servo
+    currentWeight = scale2.get_units();
     while (weight < currentWeight)
     {
+      currentWeight = scale2.get_units();
       if (weight >= currentWeight)
       {
         servoTop2.write(0); //Close Servo
@@ -177,12 +184,17 @@ void Dispense()
   if (buttonState3 == HIGH)
   {
     servoTop3.write(90); //Open Servo
+    currentWeight = scale3.get_units();
     while (weight < currentWeight)
     {
+      currentWeight = scale3.get_units();
       if (weight >= currentWeight)
       {
-        servoTop2.write(0); //Close Servo
+        servoTop3.write(0); //Close Servo
       }
     }
   }
+  servoBot.write(90); //Open Bottom Servo
+  secs++;
+  delay(1000);
 }
