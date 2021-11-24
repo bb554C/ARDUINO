@@ -55,7 +55,10 @@ float weight = 100; //Default Grams
 int hour = 00; //Default Hour
 int mins = 00; //Default Mins
 int secs = 00; //Default Secs
-
+int timerh1 = 8; //Timer1 Hour Default
+int timerm1 = 00; //Timer1 Minutes
+int timerh2 = 20; //Timer1 Hour Default
+int timerm2 = 00; //Timer1 Minutes
 
 void setup() {
   Serial.begin(9600); //Initiate Serial Monitor
@@ -195,6 +198,8 @@ void Dispense()
     }
   }
   servoBot.write(90); //Open Bottom Servo
-  secs++;
-  delay(1000);
+  Time(); //Add 1 sec to time
+  Time(); // Add 1 sec to time
+  delay(2000);
+  servoBot.write(0); //Close Bottom Servo
 }
