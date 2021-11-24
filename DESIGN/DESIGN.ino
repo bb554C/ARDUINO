@@ -1,3 +1,4 @@
+#include <HX711.h>
 #include <PCF8574.h>
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
@@ -41,16 +42,20 @@ Servo servoTop1; //Top side servo 1
 Servo servoTop2; //Top side servo 2
 Servo servoTop3; //Top side servo 3
 Servo servoBot; //Bottom side servo
+HX711 scale1(weightSens1, sck);
+HX711 scale2(weightSens2, sck);
+HX711 scale3(weightSens3, sck);
 
 //Global Variables
 int buttonState1 = 0; //variable for reading the state of Switch 1
 int buttonState2 = 0; //variable for reading the state of Switch 2
 int buttonState3 = 0; //variable for reading the state of Switch 3
 int sensVal = 0; // variable for reading the ir sensor
-int weight = 100; //Default Grams
+float weight = 100; //Default Grams
 int hour = 00; //Default Hour
 int mins = 00; //Default Mins
 int secs = 00; //Default Secs
+
 
 void setup() {
   Serial.begin(9600); //Initiate Serial Monitor
@@ -81,7 +86,7 @@ void setup() {
 }
 
 void loop() {
-  MonitorTest(); //Monitor the values
+  DisplayTimeTest(); //Monitor the values
   Time(); //Time counter
   DisplayTime(); //Display Time
   delay(1000);
@@ -97,8 +102,17 @@ void MonitorTest()
   Serial.println(buttonState2);
   Serial.print("Button 3: ");
   Serial.println(buttonState3);
+  Serial.println();
 }
-
+void DisplayTimeTest()
+{
+  Serial.print(hour);
+  Serial.print(":");
+  Serial.print(mins);
+  Serial.print(":");
+  Serial.print(secs);
+  Serial.println();
+}
 void Time()
 {
   secs++;
@@ -131,8 +145,44 @@ void DisplayTime()
     lcd.print("0");
   }
   lcd.print(mins);
+
 }
+
 void Dispense()
 {
-
+  float currentWeight = 0;
+  if (buttonState1 == HIGH)
+  {
+    servoTop1.write(90); //Open Servo
+    while (weight < currentWeight)
+    {
+      currentWeight = scale1.get_units();
+      if (weight >= currentWeight)
+      {
+        servoTop1.write(0); //Close Servo
+      }
+    }
+  }
+  if (buttonState2 == HIGH)
+  {
+    servoTop2.write(90); //Open Servo
+    while (weight < currentWeight)
+    {
+      if (weight >= currentWeight)
+      {
+        servoTop2.write(0); //Close Servo
+      }
+    }
+  }
+  if (buttonState3 == HIGH)
+  {
+    servoTop3.write(90); //Open Servo
+    while (weight < currentWeight)
+    {
+      if (weight >= currentWeight)
+      {
+        servoTop2.write(0); //Close Servo
+      }
+    }
+  }
 }
